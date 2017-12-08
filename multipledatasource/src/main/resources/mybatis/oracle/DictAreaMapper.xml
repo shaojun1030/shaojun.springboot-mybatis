@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.multipledatasource.dao.oracle.DictAreaMapper">
+    <resultMap id="BaseResultMap" type="com.example.multipledatasource.domain.DictArea">
+        <id column="ID" jdbcType="INTEGER" property="id"/>
+        <result column="AREA_CODE" jdbcType="VARCHAR" property="areaCode"/>
+        <result column="AREA_LEVEL" jdbcType="INTEGER" property="areaLevel"/>
+        <result column="AREA_NAME" jdbcType="VARCHAR" property="areaName"/>
+        <result column="PARENT_AREA_ID" jdbcType="INTEGER" property="parentAreaId"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    ID, AREA_CODE, AREA_LEVEL, AREA_NAME, PARENT_AREA_ID
+  </sql>
+    <select id="findAll" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from DICT_AREA
+    </select>
+</mapper>

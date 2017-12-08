@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.multipledatasource.dao.mysql.DataObtainDao">
+
+	<select id="get" resultType="com.example.multipledatasource.domain.DataObtainDO">
+		select t2.`name` as username ,t1.`id`,t1.`title`,t1.`description`,t1.`exec_sql`,t1.`exec_begin`,t1.`exec_end`,t1.`status`,t1.`file_path`,t1.`file_name`,t1.`failed_reason`,t1.`created_at`,t1.`created_by`,t1.`updated_at`,t1.`updated_by` from dm_data_obtain t1
+		left join sys_user t2 on t1.created_by=t2.user_id where t1.id = #{value}
+	</select>
+
+	<select id="list" resultType="com.example.multipledatasource.domain.DataObtainDO">
+		select t2.`name` as username ,t1.`id`,t1.`title`,t1.`description`,t1.`exec_sql`,t1.`exec_begin`,t1.`exec_end`,t1.`status`,t1.`file_path`,t1.`file_name`,t1.`failed_reason`,t1.`created_at`,t1.`created_by`,t1.`updated_at`,t1.`updated_by` from dm_data_obtain t1
+		left join sys_user t2 on t1.created_by=t2.user_id
+        <where>
+			<if test="title != null and title != ''"> and t1.title like concat('%',#{title},'%')  </if>
+		  	<if test="status != null and status != ''"> and t1.status = #{status} </if>
+		  	<if test="createdAtBegin != null and createdAtBegin != ''"> and t1.created_at &gt;= #{createdAtBegin} </if>
+			<if test="createdAtEnd != null and createdAtEnd != ''"> and t1.created_at &lt; #{createdAtEnd} </if>
+			<if test="createdBy != null and createdBy != ''"> and created_by = #{createdBy} </if>
+		</where>
+        <choose>
+            <when test="sort != null and sort.trim() != ''">
+                order by ${sort} ${order}
+            </when>
+			<otherwise>
+                order by t1.id desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="count" resultType="int">
+		select count(*) from dm_data_obtain
+		 <where>
+			<if test="title != null and title != ''"> and title like concat('%',#{title},'%')  </if>
+			<if test="status != null and status != ''"> and status = #{status} </if>
+			<if test="createdAtBegin != null and createdAtBegin != ''"> and created_at &gt;= #{createdAtBegin} </if>
+			<if test="createdAtEnd != null and createdAtEnd != ''"> and created_at &lt; #{createdAtEnd} </if>
+			<if test="createdAt != null and createdAt != ''"> and created_at = #{createdAt} </if>
+		 </where>
+	</select>
+	 
+	<insert id="save" parameterType="com.example.multipledatasource.domain.DataObtainDO"
+			useGeneratedKeys="true" keyProperty="id">
+		insert into dm_data_obtain
+		(
+			`title`,
+			`description`, 
+			`exec_sql`, 
+			`exec_begin`, 
+			`exec_end`, 
+			`status`,
+			`file_path`,
+			`file_name`,
+			`failed_reason`,
+			`created_at`,
+			`created_by`,
+			`updated_at`,
+			`updated_by`
+		)
+		values
+		(
+			#{title},
+			#{description}, 
+			#{execSql}, 
+			#{execBegin}, 
+			#{execEnd}, 
+			#{status},
+			#{filePath},
+			#{fileName},
+			#{failedReason},
+			#{createdAt}, 
+			#{createdBy},
+			#{updatedAt},
+			#{updatedBy}
+		)
+	</insert>
+	 
+	<update id="update" parameterType="com.example.multipledatasource.domain.DataObtainDO">
+		update dm_data_obtain 
+		<set>
+			<if test="title != null">`title` = #{title}, </if>
+			<if test="description != null">`description` = #{description}, </if>
+			<if test="execSql != null">`exec_sql` = #{execSql}, </if>
+			<if test="execBegin != null">`exec_begin` = #{execBegin}, </if>
+			<if test="execEnd != null">`exec_end` = #{execEnd}, </if>
+			<if test="status != null">`status` = #{status}, </if>
+			<if test="filePath != null">`file_path` = #{filePath}, </if>
+			<if test="fileName != null">`file_name` = #{fileName}, </if>
+			<if test="failedReason != null">`failed_reason` = #{failedReason}, </if>
+			<if test="createdAt != null">`created_at` = #{createdAt}, </if>
+			<if test="createdBy != null">`created_by` = #{createdBy},</if>
+			<if test="updatedAt != null">`updated_at` = #{updatedAt}, </if>
+			<if test="updatedBy != null">`updated_by` = #{updatedBy} </if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="remove">
+		delete from dm_data_obtain where id = #{value}
+	</delete>
+	
+	<delete id="batchRemove">
+		delete from dm_data_obtain where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>
